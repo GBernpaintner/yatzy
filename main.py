@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'sercrutkee'
 socketio = SocketIO(app)
 
 
-#-------------------- Web Pages --------------------#
+# -------------------- Web Pages -------------------- #
 
 
 # The keys are the socketio room names that are also 
@@ -55,7 +55,7 @@ def play(room):
     return render_template('play.html', image_data=image_data, counter=state['counter'])
 
 
-#-------------------- SocketIO --------------------#
+# -------------------- SocketIO -------------------- #
 
 
 # All sids are stored along with the room they belong to.
@@ -68,22 +68,23 @@ UPDATE = 'update'
 
 @socketio.event
 def join(url):
-    '''
-    url: The url from which the client made the connection contains the room for the socket.
-    '''
+    """
+    url: The url from which the client made the connection contains
+    the room for the socket.
+    """
     room = urlparse(url).path.split('/')[-1]
     join_room(room)
     rooms[request.sid] = room
 
 
 def do_action(f, *args, **kwargs):
-    '''Contains logic common to all actions
+    """Contains logic common to all actions
 
     Grabs the current sid's room and calls the action f with
     the correct state, updates the state, and emits an update.
-    '''
+    """
     room = rooms[request.sid]
-    states[room] = f(*args, state=states[room], **kwargs)
+    states[room] = f(*args, **kwargs, state=states[room])
     socketio.emit(UPDATE, states[room], room=room)
 
 
@@ -102,9 +103,8 @@ def do_reset():
     do_action(reset)
 
 
-#-------------------- Startup --------------------#
+# -------------------- Startup -------------------- #
 
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
-
