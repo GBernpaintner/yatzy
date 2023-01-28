@@ -36,7 +36,7 @@ IMAGE_FOLDER = 'images'
 @app.route('/')
 def index():
     rooms = states.keys()
-    return render_template('index.html', rooms=rooms)
+    return render_template('index.j2', rooms=rooms)
 
 
 @app.route('/play/<room>')
@@ -52,7 +52,7 @@ def play(room):
             'filename': f'{IMAGE_FOLDER}/{value}.png',
             'kept': 'kept' if kept else ''
         })
-    return render_template('play.html', image_data=image_data, counter=state['counter'])
+    return render_template('play.j2', image_data=image_data, counter=state['counter'])
 
 
 # -------------------- SocketIO -------------------- #
