@@ -39,12 +39,10 @@ function getIndex(element) {
     return parseInt(element.attributes['index'].value)
 }
 
-
 function getDiceImages() {
-    diceImages = document.getElementsByClassName('dice')
+    let diceImages = document.getElementsByClassName('dice')
     return diceImages = Array.prototype.slice.call(diceImages, 0);
 }
-
 
 let state = {}
 function updateVisuals(state) {
@@ -59,3 +57,13 @@ function updateVisuals(state) {
     })
     document.getElementById('throw-counter').textContent = state.counter
 }
+
+const images = []
+function preloadImages() {
+    for (let i = 1; i <= 6; i++) {
+        images.push(new Image())
+        images[i - 1].src = `${IMAGES_URL}/${i}.png`
+    }
+}
+
+preloadImages()
