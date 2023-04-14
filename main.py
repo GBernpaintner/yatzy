@@ -32,6 +32,14 @@ states = {
 IMAGE_FOLDER = 'images'
 
 
+COMBO_HEADERS = [ # in swedish since it's for family
+    'Namn',
+    'Ettor', 'Tvåor', 'Treor', 'Fyror', 'Femmor', 'Sexor',
+    'Summa', 'Bonus', 'Ett par', 'Två par', 'Tretal', 'Fyrtal',
+    'Liten stege', 'Stor stege', 'Kåk', 'Chans', 'Yatzy', 'Summa'
+]
+
+
 @app.route('/index')
 @app.route('/')
 def index():
@@ -52,7 +60,8 @@ def play(room):
             'filename': f'{IMAGE_FOLDER}/{value}.png',
             'kept': 'kept' if kept else ''
         })
-    return render_template('play.j2', image_data=image_data, counter=state['counter'])
+    return render_template('play.j2', image_data=image_data,
+                           counter=state['counter'], combo_headers=COMBO_HEADERS)
 
 
 # -------------------- SocketIO -------------------- #

@@ -27,5 +27,14 @@
       <button onclick=roll()>Slå tärningar</button>
       <button onclick=reset()>Nästa spelare</button>
     </div>
+    <div class="scoresheet-container">
+      <table class="scoresheet">
+        {% for header in combo_headers %}
+        <tr>
+          <th>{{ header }}</th>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
   </body>
 </html>
