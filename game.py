@@ -23,4 +23,3 @@ def reset(*, state):
     counter = 0
     kept = [False, False, False, False, False]
     return {**state, 'counter': counter, 'kept': kept }
-

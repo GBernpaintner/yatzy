@@ -29,12 +29,21 @@
     </div>
     <div class="scoresheet-container">
       <table class="scoresheet">
-        {% for header in combo_headers %}
+        {% for row in scoresheet %}
         <tr>
-          <th>{{ header }}</th>
+          <th>{{ row.header }}</th>
+          {% for cell in row.cells %}
+          <td>{{ cell }}</td>
+          {% endfor %}
         </tr>
         {% endfor %}
       </table>
     </div>
+    <div class="overlay">
+      <div class="overlay-content">
+        <label for="player-name">Namn</label>
+        <input id="player-name" type="text" placeholder="Namn">
+        <button onclick="joinGame()">Gå med i spelet</button>
+      </div>
   </body>
 </html>

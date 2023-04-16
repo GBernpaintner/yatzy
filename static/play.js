@@ -27,8 +27,16 @@ function keep(index) {
     socket.emit('keep', index)
 }
 
-function reset(index) {
+function reset() {
     socket.emit('reset')
+}
+
+
+//-------------------- Overlay --------------------//
+
+
+function joinGame() {
+    socket.emit('join_game', document.getElementById('player-name').value)
 }
 
 
