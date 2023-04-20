@@ -24,12 +24,14 @@ states = {
         'counter': 0,
         'kept': [False, False, False, False, False],
         'player_ids': [],
+        'player_names': {},
         'has_started': False
     }, '12345': {
         'values': [1,2,3,4,5],
         'counter': 0,
         'kept': [False, False, False, False, False],
         'player_ids': [],
+        'player_names': {},
         'has_started': False
     }
 }
@@ -44,6 +46,12 @@ COMBO_HEADERS = [ # in swedish since it's for family
     'Summa', 'Bonus', 'Ett par', 'Två par', 'Tretal', 'Fyrtal',
     'Liten stege', 'Stor stege', 'Kåk', 'Chans', 'Yatzy', 'Summa'
 ]
+
+
+class OVERLAY:
+    """Constants for the overlay css classes"""
+    ACTIVE = 'active'
+    INACTIVE = 'inactive'
 
 
 # Generate a unique id for users to be stored as cookies
@@ -64,6 +72,20 @@ def generate_player_id(route):
             return response
         return route(*args, **kwargs)
     return wrapper
+
+
+def generate_scoresheet(state):
+    scoresheet = []
+    scoresheet.append({
+        'header': COMBO_HEADERS[0],
+        'cells': [state['player_names'][player_id] for player_id in state['player_ids']]
+    })
+    for header in COMBO_HEADERS[1:]:
+        scoresheet.append({
+            'header': header,
+            'cells': [None] * len(state['player_ids'])
+        })
+    return scoresheet
 
 
 @app.route('/index')
@@ -88,9 +110,14 @@ def play(room):
             'filename': f'{IMAGE_FOLDER}/{value}.png',
             'kept': 'kept' if kept else ''
         })
-    scoresheet = [{'header': header, 'cells': list(range(1, 5))} for header in COMBO_HEADERS]
-    return render_template('play.j2', image_data=image_data,
-                           counter=state['counter'], scoresheet=scoresheet)
+    scoresheet = generate_scoresheet(state)
+    should_show_overlay = request.cookies.get('player_id') not in state['player_ids']
+    show_overlay = OVERLAY.ACTIVE if should_show_overlay else OVERLAY.INACTIVE
+    return render_template('play.j2',
+                           image_data=image_data,
+                           counter=state['counter'],
+                           scoresheet=scoresheet,
+                           show_overlay=show_overlay)
 
 
 # -------------------- SocketIO -------------------- #
@@ -144,14 +171,17 @@ def do_reset():
 
 @socketio.on('join_game')
 def do_join_game(player_name):
-    print(f'{player_name} joined the game')
-    # room = rooms[request.sid]
-    # player_id = request.cookies.get('player_id')
-    # if player_id not in states[room]['player_ids']:
-    #     states[room]['player_ids'].append(player_id)
-    #     socketio.emit(UPDATE, states[room], room=room)
-    # else:
-    #     socketio.emit(GAME_STARTED, room=room)
+    room = rooms[request.sid]
+    state = states[room]
+    player_id = request.cookies.get('player_id')
+    if player_id not in state['player_ids']:
+        print(f'{player_name} joined the game in room {room}')
+        state_update = {
+            'player_ids': [*state['player_ids'], player_id],
+            'player_names': {**state['player_names'], player_id: player_name}
+        }
+        states[room] = {**state, **state_update}
+        socketio.emit(UPDATE, states[room], room=room)
 
 
 # -------------------- Startup -------------------- #

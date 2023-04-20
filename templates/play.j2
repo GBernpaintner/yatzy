@@ -28,7 +28,7 @@
       <button onclick=reset()>Nästa spelare</button>
     </div>
     <div class="scoresheet-container">
-      <table class="scoresheet">
+      <table id="scoresheet" class="scoresheet">
         {% for row in scoresheet %}
         <tr>
           <th>{{ row.header }}</th>
@@ -39,9 +39,8 @@
         {% endfor %}
       </table>
     </div>
-    <div class="overlay">
+    <div class="overlay {{ show_overlay }}">
       <div class="overlay-content">
-        <label for="player-name">Namn</label>
         <input id="player-name" type="text" placeholder="Namn">
         <button onclick="joinGame()">Gå med i spelet</button>
       </div>
